@@ -333,13 +333,26 @@ document.addEventListener('DOMContentLoaded', () => {
         // Audio Player
         const audioPlayer = document.getElementById('mental-audio-player');
         const audioTitle = document.getElementById('audio-title');
+        const visualizerCanvas = document.getElementById('audio-visualizer');
+        
+        let visualizer;
+
         document.querySelectorAll('.audio-player button').forEach(button => {
             button.addEventListener('click', () => {
                 playClickSound();
                 const src = button.dataset.audioSrc;
                 const title = button.dataset.audioTitle;
+                
+                if (!visualizer) {
+                    visualizer = new AudioVisualizer(audioPlayer, visualizerCanvas);
+                }
+
                 if (audioPlayer.src.endsWith(src)) {
-                    audioPlayer.paused ? audioPlayer.play() : audioPlayer.pause();
+                    if (audioPlayer.paused) {
+                        audioPlayer.play();
+                    } else {
+                        audioPlayer.pause();
+                    }
                 } else {
                     audioPlayer.src = src;
                     audioTitle.textContent = title;
@@ -347,6 +360,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         });
+        
+        audioPlayer.onplay = () => visualizer?.start();
+        audioPlayer.onpause = () => visualizer?.stop();
 
         // Mental State Form
         const mentalForm = document.getElementById('mental-state-form');
@@ -369,3 +385,92 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 });
+
+class AudioVisualizer {
+    constructor(audioElement, canvasElement) {
+        this.audioElement = audioElement;
+        this.canvas = canvasElement;
+        this.canvasCtx = this.canvas.getContext('2d');
+        this.animationFrameId = null;
+        this.audioCtx = null;
+        this.analyser = null;
+        this.source = null;
+    }
+
+    _initAudioContext() {
+        if (this.audioCtx) return;
+        this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        this.analyser = this.audioCtx.createAnalyser();
+        this.analyser.fftSize = 256;
+        
+        // Check if the source is already connected
+        if (!this.audioElement.mediaSource) {
+            this.source = this.audioCtx.createMediaElementSource(this.audioElement);
+            this.audioElement.mediaSource = this.source; // Tag element to avoid reconnecting
+        } else {
+            this.source = this.audioElement.mediaSource;
+        }
+
+        this.source.connect(this.analyser);
+        this.analyser.connect(this.audioCtx.destination);
+    }
+
+    start() {
+        this._initAudioContext();
+        if (this.audioCtx.state === 'suspended') {
+            this.audioCtx.resume();
+        }
+        this._draw();
+    }
+
+    stop() {
+        if (this.animationFrameId) {
+            cancelAnimationFrame(this.animationFrameId);
+            this.animationFrameId = null;
+        }
+    }
+
+    _draw() {
+        this.animationFrameId = requestAnimationFrame(() => this._draw());
+
+        const bufferLength = this.analyser.frequencyBinCount;
+        const dataArray = new Uint8Array(bufferLength);
+        this.analyser.getByteFrequencyData(dataArray);
+
+        this.canvas.width = this.canvas.clientWidth;
+        this.canvas.height = this.canvas.clientHeight;
+        
+        this.canvasCtx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+        const barWidth = (this.canvas.width / bufferLength) * 1.5;
+        let barHeight;
+        let x = 0;
+        
+        const gradient = this.canvasCtx.createLinearGradient(0, 0, 0, this.canvas.height);
+        gradient.addColorStop(0, '#0dcaf0'); // Light blue
+        gradient.addColorStop(0.5, '#0d6efd'); // Primary blue
+        gradient.addColorStop(1, '#021027'); // Dark blue
+
+        for (let i = 0; i < bufferLength; i++) {
+            barHeight = dataArray[i] * (this.canvas.height / 255);
+            
+            this.canvasCtx.fillStyle = gradient;
+            
+            // Draw a rounded bar
+            const radius = barWidth / 3;
+            const y = this.canvas.height - barHeight;
+            this.canvasCtx.beginPath();
+            this.canvasCtx.moveTo(x + radius, y);
+            this.canvasCtx.lineTo(x + barWidth - radius, y);
+            this.canvasCtx.quadraticCurveTo(x + barWidth, y, x + barWidth, y + radius);
+            this.canvasCtx.lineTo(x + barWidth, this.canvas.height);
+            this.canvasCtx.lineTo(x, this.canvas.height);
+            this.canvasCtx.lineTo(x, y + radius);
+            this.canvasCtx.quadraticCurveTo(x, y, x + radius, y);
+            this.canvasCtx.closePath();
+            this.canvasCtx.fill();
+
+            x += barWidth + 2; // Add spacing between bars
+        }
+    }
+}

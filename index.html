@@ -153,9 +153,12 @@
                             <div class="col-lg-6">
                                 <div class="mental-module">
                                     <h4 class="text-center">Audios de Preparación</h4>
+                                    <div class="visualizer-container my-3">
+                                        <canvas id="audio-visualizer"></canvas>
+                                    </div>
                                     <div class="audio-player">
                                         <h5 id="audio-title" class="mb-3">Selecciona un audio</h5>
-                                        <audio id="mental-audio-player" class="w-100" controls></audio>
+                                        <audio id="mental-audio-player" class="w-100" controls crossorigin="anonymous"></audio>
                                         <div class="d-flex justify-content-center gap-2 mt-3">
                                              <button class="btn btn-primary" data-audio-src="affirmations.mp3" data-audio-title="Afirmaciones Positivas">Afirmaciones</button>
                                              <button class="btn btn-info" data-audio-src="visualization.mp3" data-audio-title="Visualización Guiada">Visualización</button>
