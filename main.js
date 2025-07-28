@@ -69,6 +69,40 @@ document.addEventListener('DOMContentLoaded', () => {
                 ]}
             ]
         },
+        'Bíceps': {
+            'Fuerza': [
+                { day: 'Día 1: Hipertrofia y Fuerza', focus: 'Hipertrofia Muscular, Calistenia', exercises: [
+                    { name: 'Dominadas supinas (Chin-ups)', sets: 4, reps: 'Al fallo', type: 'Calistenia' },
+                    { name: 'Curl con barra Z', sets: 4, reps: '8-10', type: 'Hipertrofia Muscular' },
+                    { name: 'Curl martillo (Hammer Curls)', sets: 3, reps: '10-12', type: 'Hipertrofia Muscular' }
+                ]},
+                { day: 'Día 2: Técnica y Aislamiento', focus: 'Técnica Específica, Resistencia', exercises: [
+                    { name: 'Curl de concentración', sets: 3, reps: '12 por brazo', type: 'Técnica (Agilidad)' },
+                    { name: 'Remo con mancuerna (enfoque en bíceps)', sets: 4, reps: '10 por brazo', type: 'Pesas' },
+                ]},
+                { day: 'Día 3: Cardio Ligero y Recuperación', focus: 'Recuperación, Cardio', exercises: [
+                    { name: 'Remo en máquina (ritmo suave)', duration: '20 min', type: 'Cardio' },
+                    { name: 'Estiramiento de bíceps y antebrazos', duration: '10 min', type: 'Recuperación y Descanso' }
+                ]}
+            ]
+        },
+        'Deltoides': {
+            'Fuerza': [
+                 { day: 'Día 1: Fuerza y Volumen', focus: 'Pesas Olímpicas, Hipertrofia', exercises: [
+                    { name: 'Press Militar de pie', sets: 5, reps: '5', type: 'Pesas Olímpicas' },
+                    { name: 'Elevaciones laterales con mancuernas', sets: 4, reps: '10-12', type: 'Hipertrofia Muscular' },
+                    { name: 'Face Pulls', sets: 3, reps: '15', type: 'Técnica (Lanzar)' }
+                ]},
+                 { day: 'Día 2: Potencia y Estabilidad', focus: 'Técnica Específica, Calistenia', exercises: [
+                    { name: 'Push Press', sets: 4, reps: '6', type: 'Pesas Olímpicas' },
+                    { name: 'Pino flexiones (asistidas o completas)', sets: 3, reps: 'Al fallo', type: 'Calistenia' },
+                ]},
+                 { day: 'Día 3: Recuperación Activa', focus: 'Recuperación y Descanso', exercises: [
+                    { name: 'Rotaciones de hombro con banda elástica', sets: 3, reps: '20 por lado', type: 'Recuperación' },
+                    { name: 'Estiramientos de deltoides', duration: '15 min', type: 'Recuperación y Descanso' }
+                ]}
+            ]
+        },
         'Cuádriceps': {
             'Fuerza': [
                  { day: 'Día 1: Fuerza Máxima', focus: 'Pesas Olímpicas', exercises: [
@@ -85,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 ]}
             ]
         }
-        // Simplified: Add more muscles and objectives as needed. Biceps and Delts removed for brevity.
+        // Simplified: Add more muscles and objectives as needed.
     };
 
     const nutritionPlans = {
